@@ -15,13 +15,7 @@ require 'memcachier'
 # The API library
 require '../../lib/smb_oauth_session'
 
-# require './lib/error_utilities'
-# require './lib/iron_worker_smb_session'
-# require './lib/registration_email'
-# require './lib/utils'
-# require './lib/app_helpers'
-
-class SubscribeApp < Sinatra::Base
+class ExampleApp < Sinatra::Base
 
   set :haml, :format => :html5
   set :port, ENV['PORT']
@@ -62,7 +56,7 @@ class SubscribeApp < Sinatra::Base
   end
 
   get '/login' do
-    haml :login, :locals => { :alert => false }
+    haml :login, :locals => { :alert => false, :debug => settings }
   end
 
   get "/logout" do
@@ -74,6 +68,13 @@ class SubscribeApp < Sinatra::Base
     "Session Test: #{session[:test]}"
   end
 
+  get '/account' do
+    check_authentication
+    haml :account, :locals => {
+      :username => current_username,
+      :user => current_user_session.sm_user }
+  end
+  
   def update_session_user(new_sm_user)
     current_user_session.set_sm_user(new_sm_user)
     warden_handler.set_user(current_user_session)
@@ -103,26 +104,19 @@ class SubscribeApp < Sinatra::Base
     haml :login, :locals => {
         :alert => "Login failed. Please try again." }
   end
-  
-  get '/account' do
-    check_authentication
-    haml :account, :locals => {
-      :username => current_username,
-      :user => current_user_session.sm_user }
-  end
 
   use Warden::Manager do |manager|
     use Rack::Logger
     manager.default_strategies :password
-    manager.failure_app = SubscribeApp
+    manager.failure_app = ExampleApp
 
     manager.serialize_into_session do |smb_session|
       # 600 = 10 minutes before cached session info times out.
-      SubscribeApp.cache.set(smb_session.hash_id, smb_session, 600)
+      ExampleApp.cache.set(smb_session.hash_id, smb_session, 600)
       smb_session.hash_id
     end
     manager.serialize_from_session do |hash_id|
-      SubscribeApp.cache.fetch(hash_id)
+      ExampleApp.cache.fetch(hash_id)
     end
   end
 
@@ -131,16 +125,16 @@ class SubscribeApp < Sinatra::Base
   end
 
   Warden::Strategies.add(:password) do
+    # Hint: To log to strerr within Warden methods, use request.logger
     def valid?
       params["username"] || params["password"]
     end
 
     def authenticate!
-      api_key = SubscribeApp.smb_api_key
-      api_version = SubscribeApp.api_version
-      cache = SubscribeApp.cache
-      smb_session = SmbOauthSession.new(:api_key => api_key, :api_version => api_version)
-      Rack::Logger.debug smb_session.dump_config
+      api_key = ExampleApp.smb_api_key
+      api_version = ExampleApp.api_version
+      cache = ExampleApp.cache
+      smb_session = SmbOauthSession.new("api_key" => api_key, "api_version" => api_version)
       smb_session.login_as(params["username"], params["password"])
       if smb_session.authenticated?
         # 600 = 10 minutes before session times out.
