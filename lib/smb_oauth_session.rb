@@ -16,8 +16,8 @@ require 'openssl'
 # HTTP::Net#verify_mode to OpenSSL::SSL::VERIFY_NONE, but then you are 
 # essentially just trusting that the remote host is who they say they
 # are. Once you get beyond quick and dirty setup and troubleshooting, 
-# you should configure your bundle. Look on Stackmob and Google if,
-# like me, you are not a crypto expert. :-)
+# you should configure your bundle. Look on Stack Overflow and Google
+# for more information if, like me, you are not a crypto expert. :-)
 module Net
   class HTTP
     alias_method :original_use_ssl=, :use_ssl=
@@ -103,7 +103,7 @@ class SmbOauthSession
     }
   end
 
-  # An alternate way of initializing a new session bt taking values
+  # An alternate way of initializing a new session by taking values
   # straight out of a response to a login request.
   def initiate(http_response)
     @success = http_response.code.to_i < 400
