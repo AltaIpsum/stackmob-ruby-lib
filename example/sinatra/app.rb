@@ -6,8 +6,8 @@ require 'haml'
 require 'warden'
 
 # I'm storing session information in memcache with help from Dalli gem
-# If you host your app on heroku, you an use their memcachier plugin, 
-# as demonstrated in the development and production environment 
+# If you host your app on heroku, you an use their memcachier plugin,
+# as demonstrated in the development and production environment
 # configuration blocks below.
 require 'dalli'
 require 'memcachier'
@@ -21,7 +21,7 @@ class ExampleApp < Sinatra::Base
   set :port, ENV['PORT']
 
   enable :logging
-  
+
   # Prefer keeping sensitive config strings in ENV vars over sticking
   # them in code.
   set :smb_api_key, ENV["STACKMOB_API_KEY"]
@@ -29,13 +29,13 @@ class ExampleApp < Sinatra::Base
 
   configure :local do
     # Memcache stores StackMob session info
-    set :cache, Dalli::Client.new('localhost:11211') 
+    set :cache, Dalli::Client.new('localhost:11211')
     set :api_version, "0"
   end
 
   configure :development do
     # Memcachier handles client config on heroku
-    set :cache, Dalli::Client.new 
+    set :cache, Dalli::Client.new
     set :api_version, "0"
   end
 
@@ -74,7 +74,7 @@ class ExampleApp < Sinatra::Base
       :username => current_username,
       :user => current_user_session.sm_user }
   end
-  
+
   def update_session_user(new_sm_user)
     current_user_session.set_sm_user(new_sm_user)
     warden_handler.set_user(current_user_session)
@@ -84,9 +84,9 @@ class ExampleApp < Sinatra::Base
 
   ## Session Protection
   #
-  # I'm using Warden because I've used it with and Devise in Ruby on
-  # Rails applications. There are probably a lot of other ways to 
-  # enforce session authentication
+  # I'm using Warden because I've used it with Devise in Ruby on Rails
+  # applications. There are probably a lot of other ways to enforce
+  # session authentication
 
   use Rack::Session::Cookie, :key => 'rack.session',
    :path => '/',
