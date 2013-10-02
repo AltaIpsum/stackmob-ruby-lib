@@ -1,0 +1,16 @@
+- message ||= false
+
+%h2= "Welcome, #{username}"
+
+- if message
+  .alert.alert-warning= message
+
+%h2 Your information
+
+%table.account-info
+%tr
+    - user.each do |col_name, col_val|
+        %th= col_name 
+        %td= col_val
+    
+

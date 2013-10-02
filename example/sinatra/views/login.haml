@@ -1,0 +1,19 @@
+%h1 Log In to your application
+
+- if alert
+    .alert= alert
+
+%form(class="form-horizontal login main-form" action="/session" method="POST")
+
+    .control-group
+        %label(class="control-label" for="username") Your username
+        .controls
+            %input(type="text" id="username" name="username" class="input-large")
+    .control-group
+        %label(class="control-label" for="password") Your password
+        .controls
+            %input(type="password" id="password" name="password" class="input-large")
+    .control-group
+        .controls
+            %button(type="submit" class="btn btn-primary") Proceed
+            %a(class="btn" href="/") Cancel

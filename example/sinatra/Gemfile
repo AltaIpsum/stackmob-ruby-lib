@@ -1,0 +1,12 @@
+source 'https://rubygems.org'
+gem 'sinatra'
+gem 'thin'
+gem 'haml'
+
+# Secure-ah-tie!
+gem 'warden'      
+gem 'bcrypt-ruby' 
+
+# Storing SMb Sessions
+gem 'memcachier'
+gem 'dalli'
